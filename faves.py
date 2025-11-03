@@ -26,12 +26,12 @@ def get_observations_page(url, page=1):
             doc = BeautifulSoup(data, "html.parser")
             obs_els = doc.select('div.observation')
             if len(obs_els) == 0:
-                raise IndexError('No more pages')
+                raise StopIteration('Ran out of pages')
             for obs_el in obs_els:
                 obs_id = obs_el['id'].replace('observation-', '')
                 obs_ids.append(obs_id)
         else:
-            raise IndexError('Page not found')
+            raise StopIteration(f'Response status code = {response.status_code}')
     return obs_ids
 
 def get_user_faves(user_id, **params):
@@ -50,8 +50,17 @@ def get_user_faves(user_id, **params):
         try:
             obs_ids.extend(get_observations_page(url, page))
             page += 1
-        except IndexError:
+        except StopIteration:
             page = 0
+    print(f'{len(obs_ids)} faves by {user_id} found')
+    page = 1
+    faves = []
+    while True:
+        _faves = Observation.from_json_list(get_observations(id=obs_ids, **params, per_page=200, page=page, fields='all'))
+        if len(_faves) == 0:
+            break
+        else:
+            faves.extend(_faves)
+            page += 1
 
-    faves = Observation.from_json_list(get_observations(id=obs_ids, **params, fields='all'))
     return faves
