@@ -56,7 +56,8 @@ def get_user_faves(user_id, **params):
     page = 1
     faves = []
     while True:
-        _faves = Observation.from_json_list(get_observations(id=obs_ids, **params, per_page=200, page=page, fields='all'))
+        response = get_observations(id=obs_ids, per_page=200, page=page, **params, fields='all')
+        _faves = Observation.from_json_list(response)
         if len(_faves) == 0:
             break
         else:
