@@ -13,7 +13,7 @@ $ git clone https://github.com/synrg/pyinat-scripts
 - Run each script with uv, e.g.
 ```sh
 $ cd pyinat-scripts
-$ uv run faves dgcurrywheel place_id=7095
+$ uv run faves.py dgcurrywheel place_id=7095
 ```
 - By default, scripts run against the `main` branch of pyinaturalist from
   github, as some of them only work with that version.
